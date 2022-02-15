@@ -222,7 +222,40 @@ endif()
 # search_application(${CMAKE_SOURCE_DIR}/${APP_DIR})
 search_application(${CMAKE_SOURCE_DIR}/../${APP_DIR})
 ```
+
 ### 第三步
+ * 修改 bl_mcu_sdk/bsp/bsp_common/platform/bflb_platform.h 文件
+```c
+/*!< 找到对应段修改为以下 */
+#ifndef SEGGER_RTT_VIEW
+    #define MSG(a, ...)     bflb_platform_printf(a, ##__VA_ARGS__)
+    #define MSG_DBG(a, ...) bflb_platform_printf(a, ##__VA_ARGS__)
+    #define MSG_ERR(a, ...) bflb_platform_printf(a, ##__VA_ARGS__)
+#else
+    #include "segger_rtt_debug_log.h"
+    #define MSG             LOG_INFO
+    #define MSG_DBG         LOG_DEBUG
+    #define MSG_ERR         LOG_ERROR
+#endif
+```
+```c
+/*!< 找到对应段修改为以下 */
+#ifndef SEGGER_RTT_VIEW
+    #define LOG_D(fmt, ...) dbg_log_line("D", 0, fmt, ##__VA_ARGS__)
+    #define LOG_I(fmt, ...) dbg_log_line("I", 35, fmt, ##__VA_ARGS__)
+    #define LOG_W(fmt, ...) dbg_log_line("W", 33, fmt, ##__VA_ARGS__)
+    #define LOG_E(fmt, ...) dbg_log_line("E", 31, fmt, ##__VA_ARGS__)
+    #define LOG_RAW(...)    bflb_platform_printf(__VA_ARGS__)
+#else
+    #define LOG_D           LOG_DEBUG
+    #define LOG_I           LOG_INFO
+    #define LOG_W           LOG_WARN
+    #define LOG_E           LOG_ERROR
+    #define LOG_RAW(...)    ((void)0)
+#endif
+```
+
+### 第四步
  * 编译工程
 ```bash
 make APP=segger_rtt
