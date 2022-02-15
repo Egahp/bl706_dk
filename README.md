@@ -261,6 +261,14 @@ search_application(${CMAKE_SOURCE_DIR}/../${APP_DIR})
 make APP=segger_rtt
 ```
 
+### 第五步
+ * 打开jlink rtt viewer软件
+ * Target Device 为RISC-V (RV32)
+ * Target Interface 为 Jtag 12000 kHz
+ * scan chain 配置为Auto detection
+ * RTT Control Block 设置为 Search Range
+ * Search Range 值为 0x22010000 0x20000
+
 ***
 ## [SDK](https://github.com/bouffalolab/bl_mcu_sdk)
 
