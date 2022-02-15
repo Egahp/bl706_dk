@@ -3,7 +3,7 @@
 ## 开发板引脚引出
 ![image](https://github.com/Egahp/bl706_dk/blob/master/picture/pinout.png)
 
-## 搭建项目
+## vscode + wsl2 + jlinkGdbServer 开发环境搭建教程
     注:以下教程已经安装好基于 vscode + wsl2 的开发环境
 
 ### 第一步
