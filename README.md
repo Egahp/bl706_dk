@@ -3,8 +3,9 @@
 ## 开发板引脚引出
 ![image](https://github.com/Egahp/bl706_dk/blob/master/picture/pinout.png)
 
+***
 ## vscode + wsl2 + jlinkGdbServer 开发环境搭建教程
-    注:以下教程已经安装好基于 vscode + wsl2 的开发环境
+>注:以下教程已经安装好基于 vscode + wsl2 的开发环境
 
 ### 第一步
 
@@ -73,14 +74,14 @@ CPU_ID?=none
 ```
 
 ### 第三步
-    复制 bl_mcu_sdk/examples/gpio/gpio_blink 文件夹到 project 文件夹，wsl2 命令行进入bl_mcu_sdk 目录，执行以下命令，如果成功则修改完成，项目根文件夹会多出 output 文件夹以及 latest 文件夹
+ * 复制 bl_mcu_sdk/examples/gpio/gpio_blink 文件夹到 project 文件夹，wsl2 命令行进入bl_mcu_sdk 目录，执行以下命令，如果成功则修改完成，项目根文件夹会多出 output 文件夹以及 latest 文件夹
 
 ```bash
 make APP=gpio_blink
 ```
 
 ### 第四步
-    复制配置工具链时候的工具链文件夹内容到riscv-elf文件夹下，工具链文件夹一般名称为riscv64-unknown-elf-xxxxxx 或 riscv64-elf-xxxxxx 等字样
+ * 复制配置工具链时候的工具链文件夹内容到riscv-elf文件夹下，工具链文件夹一般名称为riscv64-unknown-elf-xxxxxx 或 riscv64-elf-xxxxxx 等字样
 
 ### 第五步
 
@@ -123,13 +124,14 @@ make APP=gpio_blink
 ```
 
 ### 第六步
-    1.打开dev cube下载编译成功的bin文件
-    2.启动jlinkGdbServer，Target device 设置为RISC-V，little endian， jtag 接口 Fixed 12000 kHz，勾选init registers，不勾选 Localhost only。
-    3.vscode 打开对应的main文件，按F5 开始调试
+ * 打开dev cube下载编译成功的bin文件
+ * 启动jlinkGdbServer，Target device 设置为RISC-V，little endian， jtag 接口 Fixed 12000 kHz，勾选init registers，不勾选 Localhost only。
+ * vscode 打开对应的main文件，按F5 开始调试
 
-    注: 如果vscode 弹出连接超时，尝试更改ip地址
+>注: 如果vscode 弹出连接超时，尝试更改ip地址
     
 
+***
 
 ## [SDK](https://github.com/bouffalolab/bl_mcu_sdk)
 
