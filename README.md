@@ -5,7 +5,8 @@
 
 ***
 ## vscode + wsl2 + jlinkGdbServer 开发环境搭建教程
->注:以下教程已经安装好基于 vscode + wsl2 的开发环境
+>注:以下教程已经安装好基于 vscode + wsl2 的开发环境，请先参照博流官方linux开发环境搭建教程
+>使用wsl2和 vscode 搭建
 
 ### 第一步
 
@@ -59,8 +60,29 @@ add_custom_command(TARGET ${target_name}.elf POST_BUILD
 ```
  * 修改 bl_mcu_sdk/CMakeLists.txt 文件
 ```cmake
+cmake_minimum_required(VERSION 3.15)
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/tools/cmake/riscv64-unknown-elf-gcc.cmake)
+include(${CMAKE_SOURCE_DIR}/drivers/${CHIP}_driver/cpu_flags.cmake)
+include(${CMAKE_SOURCE_DIR}/tools/cmake/compiler_flags.cmake)
+include(${CMAKE_SOURCE_DIR}/tools/cmake/tools.cmake)
+
+PROJECT(${BOARD} C CXX ASM)
+# set(CMAKE_VERBOSE_MAKEFILE ON)
+ENABLE_LANGUAGE(ASM)
+
+# 添加以下一行
+set(MIDDLEWARE_DIR ${CMAKE_SOURCE_DIR}/../middleware)
+
+include_directories(${CMAKE_SOURCE_DIR}/bsp/bsp_common/platform)
+
+if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/bsp/board/${CHIP})
+include_directories(${CMAKE_SOURCE_DIR}/bsp/board/${CHIP})
+else()
+message(FATAL_ERROR "${CMAKE_SOURCE_DIR}/bsp/board/${CHIP} is not exist")
+endif()
+
 # search_application(${CMAKE_SOURCE_DIR}/${APP_DIR})
-# 注释上一行代码修改为下一行，用以使用外部的APP_DIR文件夹
+# 注释上一行改为下一行
 search_application(${CMAKE_SOURCE_DIR}/../${APP_DIR})
 ```
  * 修改 bl_mcu_sdk/Makefile 文件
@@ -132,7 +154,81 @@ make APP=gpio_blink
     
 
 ***
+## 使用 jlink rtt view 打印log信息教程
 
+### 第一步
+ * 将 root/middleware/segger_rtt 文件夹复制到你的目录 middleware文件夹内
+ * 将 root/project/segger_rtt 文件夹复制到你的目录 project 文件夹内
+
+### 第二步
+ * 修改bl_mcu_sdk/Makefile 文件
+```cmake
+
+#option config to use
+SUPPORT_FLOAT?=n
+SUPPORT_ROMAPI?=y
+SUPPORT_HALAPI?=y
+SUPPORT_USB_HS?=n
+SUPPORT_HW_SEC_ENG_DISABLE?=n
+SUPPORT_BLECONTROLLER_LIB?=n
+# 添加以下一行
+SEGGER_RTT_VIEW?=y
+
+#cmake definition config
+cmake_definition+= -DCHIP=$(CHIP)
+cmake_definition+= -DCPU_ID=$(CPU_ID)
+cmake_definition+= -DBOARD=$(BOARD)
+cmake_definition+= -DAPP_DIR=$(APP_DIR)
+cmake_definition+= -DAPP=$(APP)
+cmake_definition+= -DBOOTROM=$(BOOTROM)
+cmake_definition+= -DCONFIG_ROMAPI=$(SUPPORT_ROMAPI)
+cmake_definition+= -DCONFIG_HALAPI=$(SUPPORT_HALAPI)
+cmake_definition+= -DCONFIG_PRINT_FLOAT=$(SUPPORT_FLOAT)
+cmake_definition+= -DCONFIG_USB_HS=$(SUPPORT_USB_HS)
+cmake_definition+= -DCONFIG_HW_SEC_ENG_DISABLE=$(SUPPORT_HW_SEC_ENG_DISABLE)
+cmake_definition+= -DCONFIG_BLECONTROLLER_LIB=$(SUPPORT_BLECONTROLLER_LIB)
+# 添加以下一行
+cmake_definition+= -DSEGGER_RTT_VIEW=$(SEGGER_RTT_VIEW)
+```
+ * 修改bl_mcu_sdk/CMakeLists.txt 文件
+```cmake
+cmake_minimum_required(VERSION 3.15)
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/tools/cmake/riscv64-unknown-elf-gcc.cmake)
+include(${CMAKE_SOURCE_DIR}/drivers/${CHIP}_driver/cpu_flags.cmake)
+include(${CMAKE_SOURCE_DIR}/tools/cmake/compiler_flags.cmake)
+include(${CMAKE_SOURCE_DIR}/tools/cmake/tools.cmake)
+
+PROJECT(${BOARD} C CXX ASM)
+# set(CMAKE_VERBOSE_MAKEFILE ON)
+ENABLE_LANGUAGE(ASM)
+
+# 添加以下一行
+set(MIDDLEWARE_DIR ${CMAKE_SOURCE_DIR}/../middleware)
+
+# 添加以下四行
+if(SEGGER_RTT_VIEW)
+add_definitions(-DSEGGER_RTT_VIEW)
+include_directories(${MIDDLEWARE_DIR}/segger_rtt)
+endif()
+
+include_directories(${CMAKE_SOURCE_DIR}/bsp/bsp_common/platform)
+
+if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/bsp/board/${CHIP})
+include_directories(${CMAKE_SOURCE_DIR}/bsp/board/${CHIP})
+else()
+message(FATAL_ERROR "${CMAKE_SOURCE_DIR}/bsp/board/${CHIP} is not exist")
+endif()
+
+# search_application(${CMAKE_SOURCE_DIR}/${APP_DIR})
+search_application(${CMAKE_SOURCE_DIR}/../${APP_DIR})
+```
+### 第三步
+ * 编译工程
+```bash
+make APP=segger_rtt
+```
+
+***
 ## [SDK](https://github.com/bouffalolab/bl_mcu_sdk)
 
 ## [开发指南以及环境配置](https://dev.bouffalolab.com/media/doc/sdk/bl_mcu_sdk_zh/index.html)

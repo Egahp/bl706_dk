@@ -1,0 +1,9 @@
+*************submodule information*********************
+
+*****************sdk information************************
+c9a587c430b2036c655cd9708c7ca5fd139f4f64 [chore][eclipse] add cklink and jlink launch file for 702
+*****************gcc information************************
+riscv64-unknown-elf-gcc (SiFive GCC-Metal 10.2.0-2020.12.8) 10.2.0
+Copyright (C) 2020 Free Software Foundation, Inc.
+This is free software see the source for copying conditions.  There is NO
+warranty not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
